@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta Tags -->
+    <title>BaseVault - Collaborative Savings on Base</title>
+    <meta name="title" content="BaseVault - Collaborative Savings on Base" />
+    <meta name="description" content="Create group savings vaults, contribute ETH, and vote democratically to release funds. Perfect for group vacations, collective gifts, and shared projects." />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://your-app.vercel.app/" />
+    <meta property="og:title" content="BaseVault - Collaborative Savings on Base" />
+    <meta property="og:description" content="Create group savings vaults, contribute ETH, and vote democratically to release funds. Perfect for group vacations, collective gifts, and shared projects." />
+    <meta property="og:image" content="https://your-app.vercel.app/embed.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://your-app.vercel.app/" />
+    <meta property="twitter:title" content="BaseVault - Collaborative Savings on Base" />
+    <meta property="twitter:description" content="Create group savings vaults, contribute ETH, and vote democratically to release funds. Perfect for group vacations, collective gifts, and shared projects." />
+    <meta property="twitter:image" content="https://your-app.vercel.app/embed.png" />
+
+    <!-- Farcaster Mini App Metadata -->
+    <meta
+      property="fc:miniapp"
+      content='{
+        "version": "next",
+        "imageUrl": "https://your-app.vercel.app/embed.png",
+        "button": {
+          "title": "Open BaseVault",
+          "action": {
+            "type": "launch_miniapp",
+            "name": "BaseVault",
+            "url": "https://your-app.vercel.app",
+            "splashImageUrl": "https://your-app.vercel.app/splash.png",
+            "splashBackgroundColor": "#0A0B0D"
+          }
+        }
+      }'
+    />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0052FF" />
+
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="/logo.png" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/.well-known/farcaster.json" />
+  </head>
+  <body class="bg-dark-bg text-dark-text antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

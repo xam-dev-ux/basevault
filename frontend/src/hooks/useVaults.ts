@@ -1,0 +1,203 @@
+import { useState, useEffect, useCallback } from 'react';
+import { useWeb3 } from '../context/Web3Context';
+import { useContract } from './useContract';
+import { Vault, VaultWithProgress, CreateVaultForm } from '../types';
+import { parseETH, parseContractError, getDaysRemaining, isExpired, calculatePercentage } from '../utils/helpers';
+
+export function useVaults() {
+  const { wallet } = useWeb3();
+  const { contract, getContractWithSigner } = useContract();
+  const [vaults, setVaults] = useState<VaultWithProgress[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
+
+  // Load all vaults
+  const loadVaults = useCallback(async () => {
+    if (!contract) return;
+
+    try {
+      setLoading(true);
+      const totalVaults = await contract.getTotalVaults();
+      const vaultsData: VaultWithProgress[] = [];
+
+      for (let i = 0; i < Number(totalVaults); i++) {
+        const vault = await contract.getVault(i);
+        const progress = calculatePercentage(vault.currentAmount, vault.goal);
+
+        vaultsData.push({
+          ...vault,
+          progress,
+          isExpired: isExpired(vault.deadline),
+          daysRemaining: getDaysRemaining(vault.deadline),
+        });
+      }
+
+      // Sort by creation date (newest first)
+      vaultsData.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
+
+      setVaults(vaultsData);
+    } catch (error) {
+      console.error('Error loading vaults:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [contract]);
+
+  // Create new vault
+  const createVault = async (form: CreateVaultForm): Promise<boolean> => {
+    try {
+      setCreating(true);
+
+      const contractWithSigner = await getContractWithSigner();
+      const goal = parseETH(form.goal);
+      const durationDays = parseInt(form.durationDays);
+
+      const tx = await contractWithSigner.createVault(
+        form.name,
+        form.description,
+        goal,
+        durationDays
+      );
+
+      await tx.wait();
+      await loadVaults(); // Reload vaults
+
+      return true;
+    } catch (error) {
+      console.error('Error creating vault:', error);
+      alert(parseContractError(error));
+      return false;
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  // Contribute to vault
+  const contribute = async (vaultId: bigint, amount: string): Promise<boolean> => {
+    try {
+      const contractWithSigner = await getContractWithSigner();
+      const value = parseETH(amount);
+
+      const tx = await contractWithSigner.contribute(vaultId, { value });
+      await tx.wait();
+      await loadVaults(); // Reload vaults
+
+      return true;
+    } catch (error) {
+      console.error('Error contributing:', error);
+      alert(parseContractError(error));
+      return false;
+    }
+  };
+
+  // Emergency withdraw
+  const emergencyWithdraw = async (vaultId: bigint): Promise<boolean> => {
+    try {
+      const contractWithSigner = await getContractWithSigner();
+      const tx = await contractWithSigner.emergencyWithdraw(vaultId);
+      await tx.wait();
+      await loadVaults(); // Reload vaults
+
+      return true;
+    } catch (error) {
+      console.error('Error withdrawing:', error);
+      alert(parseContractError(error));
+      return false;
+    }
+  };
+
+  // Close vault
+  const closeVault = async (vaultId: bigint): Promise<boolean> => {
+    try {
+      const contractWithSigner = await getContractWithSigner();
+      const tx = await contractWithSigner.closeVault(vaultId);
+      await tx.wait();
+      await loadVaults(); // Reload vaults
+
+      return true;
+    } catch (error) {
+      console.error('Error closing vault:', error);
+      alert(parseContractError(error));
+      return false;
+    }
+  };
+
+  // Get user's contribution to a vault
+  const getUserContribution = async (vaultId: bigint): Promise<bigint> => {
+    if (!contract || !wallet.account) return 0n;
+
+    try {
+      return await contract.getContribution(vaultId, wallet.account);
+    } catch (error) {
+      console.error('Error getting contribution:', error);
+      return 0n;
+    }
+  };
+
+  // Get vault contributors
+  const getContributors = async (vaultId: bigint): Promise<string[]> => {
+    if (!contract) return [];
+
+    try {
+      return await contract.getVaultContributors(vaultId);
+    } catch (error) {
+      console.error('Error getting contributors:', error);
+      return [];
+    }
+  };
+
+  // Filter vaults by user participation
+  const getMyVaults = useCallback(() => {
+    if (!wallet.account) return [];
+    return vaults.filter(
+      (v) =>
+        v.creator.toLowerCase() === wallet.account!.toLowerCase()
+    );
+  }, [vaults, wallet.account]);
+
+  // Filter active vaults
+  const getActiveVaults = useCallback(() => {
+    return vaults.filter((v) => v.status === 0 && !v.isExpired);
+  }, [vaults]);
+
+  // Initialize
+  useEffect(() => {
+    if (contract) {
+      loadVaults();
+    }
+  }, [contract, loadVaults]);
+
+  // Listen to contract events
+  useEffect(() => {
+    if (!contract) return;
+
+    const onVaultCreated = () => loadVaults();
+    const onContribution = () => loadVaults();
+    const onGoalReached = () => loadVaults();
+
+    contract.on('VaultCreated', onVaultCreated);
+    contract.on('ContributionMade', onContribution);
+    contract.on('GoalReached', onGoalReached);
+
+    return () => {
+      contract.off('VaultCreated', onVaultCreated);
+      contract.off('ContributionMade', onContribution);
+      contract.off('GoalReached', onGoalReached);
+    };
+  }, [contract, loadVaults]);
+
+  return {
+    vaults,
+    loading,
+    creating,
+    createVault,
+    contribute,
+    emergencyWithdraw,
+    closeVault,
+    getUserContribution,
+    getContributors,
+    getMyVaults,
+    getActiveVaults,
+    refetch: loadVaults,
+  };
+}
