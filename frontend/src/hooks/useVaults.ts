@@ -6,42 +6,67 @@ import { parseETH, parseContractError, getDaysRemaining, isExpired, calculatePer
 
 export function useVaults() {
   const { wallet } = useWeb3();
-  const { contract, getContractWithSigner } = useContract();
+  const { contract, getContractWithSigner, contractAddress } = useContract();
   const [vaults, setVaults] = useState<VaultWithProgress[]>([]);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Load all vaults
   const loadVaults = useCallback(async () => {
-    if (!contract) return;
+    if (!contract) {
+      console.warn('Contract not initialized');
+      return;
+    }
+
+    if (!contractAddress) {
+      console.error('Contract address not configured');
+      setError('Contract address not configured. Please check environment variables.');
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
+      setError(null);
+
+      console.log('Loading vaults from contract:', contractAddress);
+
       const totalVaults = await contract.getTotalVaults();
+      console.log('Total vaults:', totalVaults.toString());
+
       const vaultsData: VaultWithProgress[] = [];
 
       for (let i = 0; i < Number(totalVaults); i++) {
-        const vault = await contract.getVault(i);
-        const progress = calculatePercentage(vault.currentAmount, vault.goal);
+        try {
+          const vault = await contract.getVault(i);
+          const progress = calculatePercentage(vault.currentAmount, vault.goal);
 
-        vaultsData.push({
-          ...vault,
-          progress,
-          isExpired: isExpired(vault.deadline),
-          daysRemaining: getDaysRemaining(vault.deadline),
-        });
+          vaultsData.push({
+            ...vault,
+            progress,
+            isExpired: isExpired(vault.deadline),
+            daysRemaining: getDaysRemaining(vault.deadline),
+          });
+        } catch (vaultError) {
+          console.error(`Error loading vault ${i}:`, vaultError);
+          // Continue loading other vaults
+        }
       }
 
       // Sort by creation date (newest first)
       vaultsData.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
 
       setVaults(vaultsData);
+      console.log('Vaults loaded successfully:', vaultsData.length);
     } catch (error) {
       console.error('Error loading vaults:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load vaults';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  }, [contract]);
+  }, [contract, contractAddress]);
 
   // Create new vault
   const createVault = async (form: CreateVaultForm): Promise<boolean> => {
@@ -190,6 +215,7 @@ export function useVaults() {
     vaults,
     loading,
     creating,
+    error,
     createVault,
     contribute,
     emergencyWithdraw,

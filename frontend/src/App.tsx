@@ -32,6 +32,7 @@ function App() {
     vaults,
     loading: vaultsLoading,
     creating: vaultCreating,
+    error: vaultsError,
     createVault,
     contribute,
     emergencyWithdraw,
@@ -265,7 +266,24 @@ function App() {
             </div>
 
             {/* Vaults Grid */}
-            {vaultsLoading ? (
+            {vaultsError ? (
+              <div className="text-center py-20">
+                <div className="w-20 h-20 bg-red-900/30 border border-red-700/50 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-3xl">⚠️</span>
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-red-400">Error Loading Vaults</h3>
+                <p className="text-dark-text-secondary mb-4">{vaultsError}</p>
+                <div className="space-y-2 text-sm text-dark-text-secondary max-w-md mx-auto">
+                  <p>Possible causes:</p>
+                  <ul className="list-disc text-left pl-6 space-y-1">
+                    <li>Contract address not configured in environment variables</li>
+                    <li>Network connection issue</li>
+                    <li>Unable to connect to Base RPC</li>
+                  </ul>
+                  <p className="pt-4">Check browser console for more details.</p>
+                </div>
+              </div>
+            ) : vaultsLoading ? (
               <div className="text-center py-20">
                 <div className="spinner mx-auto mb-4"></div>
                 <p className="text-dark-text-secondary">Loading vaults...</p>
