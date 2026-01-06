@@ -44,6 +44,7 @@ export function useVaults() {
 
           vaultsData.push({
             ...vault,
+            id: vault.id ?? BigInt(i), // Ensure ID is always set
             progress,
             isExpired: isExpired(vault.deadline),
             daysRemaining: getDaysRemaining(vault.deadline),

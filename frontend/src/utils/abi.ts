@@ -212,6 +212,16 @@ export const BASE_VAULT_ABI = [
   {
     "anonymous": false,
     "inputs": [
+      { "indexed": true, "internalType": "uint256", "name": "vaultId", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "totalAmount", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+    ],
+    "name": "GoalReached",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       { "indexed": true, "internalType": "uint256", "name": "proposalId", "type": "uint256" },
       { "indexed": true, "internalType": "uint256", "name": "vaultId", "type": "uint256" },
       { "indexed": true, "internalType": "address", "name": "proposer", "type": "address" },
