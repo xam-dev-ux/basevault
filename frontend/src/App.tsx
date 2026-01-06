@@ -391,12 +391,16 @@ function App() {
 
                 {/* Actions */}
                 <div className="flex gap-3">
-                  {selectedVault.status === 0 && !selectedVault.isExpired && (
+                  {/* Show Contribute button if vault is active (status 0 or undefined) and not expired */}
+                  {(selectedVault.status == null || selectedVault.status === 0) && !selectedVault.isExpired && (
                     <button
-                      onClick={() => setShowContributeModal(true)}
+                      onClick={() => {
+                        console.log('Opening contribute modal for vault:', selectedVault.id);
+                        setShowContributeModal(true);
+                      }}
                       className="btn btn-primary"
                     >
-                      Contribute
+                      💰 Contribute
                     </button>
                   )}
                   {userContribution > 0n && (
@@ -416,6 +420,13 @@ function App() {
                     </button>
                   )}
                 </div>
+
+                {/* Debug info - remove in production */}
+                {process.env.NODE_ENV === 'development' && (
+                  <div className="mt-4 p-2 bg-gray-800 text-xs">
+                    <p>Status: {selectedVault.status} | Expired: {String(selectedVault.isExpired)} | ID: {selectedVault.id?.toString()}</p>
+                  </div>
+                )}
               </div>
 
               {/* Tabs */}
