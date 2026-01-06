@@ -87,7 +87,7 @@ contract BaseVault {
     uint256 private proposalCounter;
 
     uint256 public constant APPROVAL_THRESHOLD = 60; // 60% required
-    uint256 public constant MIN_CONTRIBUTION = 0.001 ether;
+    uint256 public constant MIN_CONTRIBUTION = 0.0000001 ether;
 
     mapping(uint256 => Vault) public vaults;
     mapping(uint256 => mapping(address => uint256)) public contributions;
