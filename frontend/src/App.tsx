@@ -569,13 +569,13 @@ function App() {
                 type="number"
                 name="amount"
                 className="input"
-                placeholder="1.0"
-                step="0.001"
-                min="0.001"
+                placeholder="0.001"
+                step="0.0000001"
+                min="0.0000001"
                 required
               />
               <p className="text-xs text-dark-text-secondary mt-1">
-                Minimum: 0.001 ETH
+                Minimum: 0.0000001 ETH
               </p>
             </div>
             <div className="flex gap-3">
