@@ -59,8 +59,32 @@ function App() {
 
   // Farcaster Mini App Integration
   useEffect(() => {
-    // CRITICAL: Call ready() to hide splash screen and show app
-    sdk.actions.ready();
+    // Only call ready() if we're in a Farcaster Mini App context
+    // This prevents issues in regular mobile browsers (like MetaMask browser)
+    const isFarcasterContext = () => {
+      try {
+        // Check if we're in a Mini App context by checking for Farcaster-specific features
+        return (
+          typeof window !== 'undefined' &&
+          window.location.ancestorOrigins?.length > 0 &&
+          (window.location.ancestorOrigins[0]?.includes('farcaster') ||
+           window.location.ancestorOrigins[0]?.includes('warpcast'))
+        );
+      } catch {
+        return false;
+      }
+    };
+
+    if (isFarcasterContext()) {
+      try {
+        sdk.actions.ready();
+        console.log('Farcaster Mini App SDK initialized');
+      } catch (error) {
+        console.warn('Failed to initialize Farcaster SDK:', error);
+      }
+    } else {
+      console.log('Running in regular browser mode (not Mini App)');
+    }
   }, []);
 
   // Load vault details when selected
