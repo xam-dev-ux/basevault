@@ -96,7 +96,10 @@ function App() {
   }, [selectedVault, wallet.account]);
 
   async function loadVaultDetails() {
-    if (!selectedVault) return;
+    if (!selectedVault || selectedVault.id == null) {
+      console.warn('Cannot load vault details: vault or ID is null');
+      return;
+    }
 
     const contribution = await getUserContribution(selectedVault.id);
     setUserContribution(contribution);
@@ -144,7 +147,10 @@ function App() {
   // Handle contribute
   async function handleContribute(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!selectedVault) return;
+    if (!selectedVault || selectedVault.id == null) {
+      alert('Vault ID is missing. Please try selecting the vault again.');
+      return;
+    }
 
     const formData = new FormData(e.currentTarget);
     const amount = formData.get('amount') as string;
@@ -165,7 +171,10 @@ function App() {
   // Handle create proposal
   async function handleCreateProposal(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!selectedVault) return;
+    if (!selectedVault || selectedVault.id == null) {
+      alert('Vault ID is missing. Please try selecting the vault again.');
+      return;
+    }
 
     const formData = new FormData(e.currentTarget);
 
@@ -194,7 +203,10 @@ function App() {
 
   // Handle emergency withdraw
   async function handleEmergencyWithdraw() {
-    if (!selectedVault) return;
+    if (!selectedVault || selectedVault.id == null) {
+      alert('Vault ID is missing. Please try selecting the vault again.');
+      return;
+    }
     if (!confirm('Are you sure you want to withdraw your contribution?')) return;
 
     const success = await emergencyWithdraw(selectedVault.id);
@@ -342,15 +354,15 @@ function App() {
                 {/* Progress */}
                 <div className="mb-6">
                   <div className="flex justify-between mb-2">
-                    <span className="font-medium">Progress: {selectedVault.progress}%</span>
+                    <span className="font-medium">Progress: {selectedVault.progress ?? 0}%</span>
                     <span className="text-dark-text-secondary">
-                      {formatETH(selectedVault.currentAmount)} / {formatETH(selectedVault.goal)} ETH
+                      {formatETH(selectedVault.currentAmount ?? 0n)} / {formatETH(selectedVault.goal ?? 0n)} ETH
                     </span>
                   </div>
                   <div className="progress-bar h-3">
                     <div
                       className="progress-fill"
-                      style={{ width: `${Math.min(selectedVault.progress, 100)}%` }}
+                      style={{ width: `${Math.min(selectedVault.progress ?? 0, 100)}%` }}
                     />
                   </div>
                 </div>
@@ -359,21 +371,21 @@ function App() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   <div>
                     <p className="text-sm text-dark-text-secondary">Contributors</p>
-                    <p className="text-xl font-bold">{selectedVault.contributorsCount.toString()}</p>
+                    <p className="text-xl font-bold">{selectedVault.contributorsCount ? selectedVault.contributorsCount.toString() : '0'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-dark-text-secondary">Time Left</p>
                     <p className="text-xl font-bold">
-                      {selectedVault.isExpired ? 'Expired' : formatDuration(selectedVault.daysRemaining)}
+                      {selectedVault.isExpired ? 'Expired' : formatDuration(selectedVault.daysRemaining ?? 0)}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-dark-text-secondary">Deadline</p>
-                    <p className="text-xl font-bold">{formatDate(selectedVault.deadline)}</p>
+                    <p className="text-xl font-bold">{formatDate(selectedVault.deadline ?? 0n)}</p>
                   </div>
                   <div>
                     <p className="text-sm text-dark-text-secondary">Your Contribution</p>
-                    <p className="text-xl font-bold">{formatETH(userContribution)} ETH</p>
+                    <p className="text-xl font-bold">{formatETH(userContribution ?? 0n)} ETH</p>
                   </div>
                 </div>
 

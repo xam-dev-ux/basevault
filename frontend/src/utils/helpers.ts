@@ -37,14 +37,21 @@ export function truncateAddress(address: string, chars: number = 4): string {
 /**
  * Format timestamp to readable date
  */
-export function formatDate(timestamp: bigint | number): string {
-  const ts = typeof timestamp === 'bigint' ? Number(timestamp) : timestamp;
-  const date = new Date(ts * 1000);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+export function formatDate(timestamp: bigint | number | null | undefined): string {
+  if (timestamp == null) return 'N/A';
+  try {
+    const ts = typeof timestamp === 'bigint' ? Number(timestamp) : timestamp;
+    if (ts === 0) return 'N/A';
+    const date = new Date(ts * 1000);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'N/A';
+  }
 }
 
 /**
