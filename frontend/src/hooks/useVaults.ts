@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useWeb3 } from '../context/Web3Context';
 import { useContract } from './useContract';
-import { Vault, VaultWithProgress, CreateVaultForm } from '../types';
+import { VaultWithProgress, CreateVaultForm } from '../types';
 import { parseETH, parseContractError, getDaysRemaining, isExpired, calculatePercentage } from '../utils/helpers';
 
 export function useVaults() {

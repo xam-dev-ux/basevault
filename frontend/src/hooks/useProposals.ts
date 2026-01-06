@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useWeb3 } from '../context/Web3Context';
 import { useContract } from './useContract';
-import { Proposal, ProposalWithProgress, CreateProposalForm } from '../types';
+import { ProposalWithProgress, CreateProposalForm } from '../types';
 import { parseETH, parseContractError } from '../utils/helpers';
 
 export function useProposals(vaultId?: bigint) {
