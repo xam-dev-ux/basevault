@@ -40,6 +40,14 @@ export function useVaults() {
       for (let i = 0; i < Number(totalVaults); i++) {
         try {
           const vault = await contract.getVault(i);
+          console.log(`Vault ${i} raw data:`, vault);
+
+          // Validate vault data
+          if (!vault) {
+            console.error(`Vault ${i} returned null/undefined`);
+            continue;
+          }
+
           const progress = calculatePercentage(vault.currentAmount, vault.goal);
 
           vaultsData.push({
@@ -49,6 +57,8 @@ export function useVaults() {
             isExpired: isExpired(vault.deadline),
             daysRemaining: getDaysRemaining(vault.deadline),
           });
+
+          console.log(`Vault ${i} processed successfully`);
         } catch (vaultError) {
           console.error(`Error loading vault ${i}:`, vaultError);
           // Continue loading other vaults

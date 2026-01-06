@@ -3,10 +3,16 @@ import { formatEther, parseEther } from 'ethers';
 /**
  * Format ETH amount from wei to readable string
  */
-export function formatETH(wei: bigint, decimals: number = 4): string {
-  const eth = formatEther(wei);
-  const num = parseFloat(eth);
-  return num.toFixed(decimals);
+export function formatETH(wei: bigint | null | undefined, decimals: number = 4): string {
+  if (wei == null) return '0.0000';
+  try {
+    const eth = formatEther(wei);
+    const num = parseFloat(eth);
+    return num.toFixed(decimals);
+  } catch (error) {
+    console.error('Error formatting ETH:', error, 'wei:', wei);
+    return '0.0000';
+  }
 }
 
 /**
@@ -63,27 +69,45 @@ export function formatRelativeTime(timestamp: bigint | number): string {
 /**
  * Calculate days remaining until deadline
  */
-export function getDaysRemaining(deadline: bigint): number {
-  const now = Math.floor(Date.now() / 1000);
-  const diff = Number(deadline) - now;
-  return Math.max(0, Math.ceil(diff / (24 * 60 * 60)));
+export function getDaysRemaining(deadline: bigint | null | undefined): number {
+  if (deadline == null) return 0;
+  try {
+    const now = Math.floor(Date.now() / 1000);
+    const diff = Number(deadline) - now;
+    return Math.max(0, Math.ceil(diff / (24 * 60 * 60)));
+  } catch (error) {
+    console.error('Error calculating days remaining:', error);
+    return 0;
+  }
 }
 
 /**
  * Check if deadline has passed
  */
-export function isExpired(deadline: bigint): boolean {
-  const now = Math.floor(Date.now() / 1000);
-  return Number(deadline) < now;
+export function isExpired(deadline: bigint | null | undefined): boolean {
+  if (deadline == null) return true;
+  try {
+    const now = Math.floor(Date.now() / 1000);
+    return Number(deadline) < now;
+  } catch (error) {
+    console.error('Error checking expiration:', error);
+    return true;
+  }
 }
 
 /**
  * Calculate percentage (0-100)
  */
-export function calculatePercentage(current: bigint, total: bigint): number {
+export function calculatePercentage(current: bigint | null | undefined, total: bigint | null | undefined): number {
+  if (current == null || total == null) return 0;
   if (total === 0n) return 0;
-  const percent = Number((current * 100n) / total);
-  return Math.min(100, Math.max(0, percent));
+  try {
+    const percent = Number((current * 100n) / total);
+    return Math.min(100, Math.max(0, percent));
+  } catch (error) {
+    console.error('Error calculating percentage:', error);
+    return 0;
+  }
 }
 
 /**

@@ -51,10 +51,10 @@ export function VaultCard({ vault, onClick }: VaultCardProps) {
       <div className="flex justify-between items-center mb-4">
         <div>
           <p className="text-2xl font-bold text-dark-text">
-            {formatETH(vault.currentAmount)} ETH
+            {formatETH(vault.currentAmount ?? 0n)} ETH
           </p>
           <p className="text-sm text-dark-text-secondary">
-            of {formatETH(vault.goal)} ETH goal
+            of {formatETH(vault.goal ?? 0n)} ETH goal
           </p>
         </div>
       </div>
@@ -65,7 +65,7 @@ export function VaultCard({ vault, onClick }: VaultCardProps) {
           <div>
             <p className="text-dark-text-secondary">Contributors</p>
             <p className="text-dark-text font-medium">
-              {vault.contributorsCount.toString()}
+              {vault.contributorsCount ? vault.contributorsCount.toString() : '0'}
             </p>
           </div>
           <div>
