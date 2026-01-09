@@ -4,11 +4,11 @@
 
 @layer base {
   * {
-    @apply border-dark-border;
+    @apply border-dark-border dark:border-dark-border border-light-border;
   }
 
   body {
-    @apply bg-dark-bg text-dark-text;
+    @apply bg-light-bg text-light-text dark:bg-dark-bg dark:text-dark-text transition-colors duration-200;
   }
 
   html {
@@ -17,9 +17,9 @@
 }
 
 @layer components {
-  /* Button Styles */
+  /* Button Styles - Minimum 44px touch target */
   .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px];
   }
 
   .btn-primary {
@@ -27,7 +27,7 @@
   }
 
   .btn-secondary {
-    @apply bg-dark-surface hover:bg-dark-surface-hover text-dark-text border border-dark-border;
+    @apply bg-light-surface hover:bg-light-surface-hover dark:bg-dark-surface dark:hover:bg-dark-surface-hover text-light-text dark:text-dark-text border border-light-border dark:border-dark-border;
   }
 
   .btn-danger {
@@ -35,25 +35,25 @@
   }
 
   .btn-sm {
-    @apply px-3 py-1.5 text-sm;
+    @apply px-4 py-2.5 text-sm min-h-[44px];
   }
 
   .btn-lg {
-    @apply px-6 py-3 text-lg;
+    @apply px-8 py-4 text-lg min-h-[48px];
   }
 
   /* Card Styles */
   .card {
-    @apply bg-dark-surface border border-dark-border rounded-xl p-6 transition-all duration-200;
+    @apply bg-light-surface dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-xl p-6 transition-all duration-200;
   }
 
   .card-hover {
-    @apply hover:bg-dark-surface-hover hover:shadow-lg hover:shadow-base-blue/10;
+    @apply hover:bg-light-surface-hover dark:hover:bg-dark-surface-hover hover:shadow-lg hover:shadow-base-blue/10;
   }
 
   /* Input Styles */
   .input {
-    @apply w-full bg-dark-bg border border-dark-border rounded-lg px-4 py-2 text-dark-text placeholder-dark-text-secondary focus:outline-none focus:ring-2 focus:ring-base-blue focus:border-transparent transition-all;
+    @apply w-full bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-4 py-2 text-light-text dark:text-dark-text placeholder-light-text-secondary dark:placeholder-dark-text-secondary focus:outline-none focus:ring-2 focus:ring-base-blue focus:border-transparent transition-all;
   }
 
   .textarea {
@@ -83,16 +83,16 @@
 
   /* Progress Bar */
   .progress-bar {
-    @apply w-full h-2 bg-dark-bg rounded-full overflow-hidden;
+    @apply w-full h-2 bg-light-bg dark:bg-dark-bg rounded-full overflow-hidden;
   }
 
   .progress-fill {
     @apply h-full bg-gradient-to-r from-base-blue to-base-blue-light transition-all duration-500;
   }
 
-  /* Tab Styles */
+  /* Tab Styles - Minimum 44px touch target */
   .tab {
-    @apply px-4 py-2 font-medium transition-all cursor-pointer;
+    @apply px-6 py-3 font-medium transition-all cursor-pointer min-h-[44px] flex items-center;
   }
 
   .tab-active {
@@ -100,12 +100,12 @@
   }
 
   .tab-inactive {
-    @apply text-dark-text-secondary hover:text-dark-text;
+    @apply text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text;
   }
 
   /* Loading Spinner */
   .spinner {
-    @apply animate-spin h-5 w-5 border-2 border-dark-border border-t-base-blue rounded-full;
+    @apply animate-spin h-5 w-5 border-2 border-light-border dark:border-dark-border border-t-base-blue rounded-full;
   }
 
   /* Container */
@@ -120,7 +120,7 @@
   }
 
   .glass {
-    @apply bg-dark-surface/80 backdrop-blur-lg border border-dark-border/50;
+    @apply bg-light-surface/80 dark:bg-dark-surface/80 backdrop-blur-lg border border-light-border/50 dark:border-dark-border/50;
   }
 
   .scrollbar-hide {

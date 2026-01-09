@@ -7,25 +7,25 @@
   "miniapp": {
     "version": "1",
     "name": "BaseVault",
-    "homeUrl": "https://your-app.vercel.app",
-    "iconUrl": "https://your-app.vercel.app/logo.png",
-    "splashImageUrl": "https://your-app.vercel.app/splash.png",
+    "homeUrl": "https://basevault-woad.vercel.app",
+    "iconUrl": "https://basevault-woad.vercel.app/icon-1024.png",
+    "splashImageUrl": "https://basevault-woad.vercel.app/splash.png",
     "splashBackgroundColor": "#0A0B0D",
     "webhookUrl": "",
-    "subtitle": "Collaborative savings made easy",
-    "description": "BaseVault is a decentralized application on Base L2 that enables groups to create savings vaults, contribute ETH collaboratively, and vote democratically on fund releases. Perfect for group vacations, collective gifts, shared projects, and any collaborative financial goal.",
+    "subtitle": "Create shared savings vaults with democratic fund management",
+    "description": "BaseVault enables groups to pool funds in collaborative savings vaults on Base. Create goals, contribute together, and vote democratically on proposals for fund releases. Perfect for group savings, shared expenses, and community treasuries with transparent on-chain governance.",
     "screenshotUrls": [
-      "https://your-app.vercel.app/screenshots/1.png",
-      "https://your-app.vercel.app/screenshots/2.png",
-      "https://your-app.vercel.app/screenshots/3.png"
+      "https://basevault-woad.vercel.app/screenshots/screenshot-1.png",
+      "https://basevault-woad.vercel.app/screenshots/screenshot-2.png",
+      "https://basevault-woad.vercel.app/screenshots/screenshot-3.png"
     ],
     "primaryCategory": "finance",
     "tags": ["savings", "collaborative", "dao", "voting", "defi", "web3", "ethereum", "base"],
-    "heroImageUrl": "https://your-app.vercel.app/hero.png",
+    "heroImageUrl": "https://basevault-woad.vercel.app/cover-1200x630.png",
     "tagline": "Save together, decide together",
     "ogTitle": "BaseVault - Collaborative Savings on Base",
     "ogDescription": "Create group savings vaults and vote democratically to release funds. Built on Base L2 for low fees and fast transactions.",
-    "ogImageUrl": "https://your-app.vercel.app/embed.png",
+    "ogImageUrl": "https://basevault-woad.vercel.app/cover-1200x630.png",
     "noindex": false
   }
 }

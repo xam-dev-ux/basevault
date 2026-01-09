@@ -10,6 +10,8 @@ export function useVaults() {
   const [vaults, setVaults] = useState<VaultWithProgress[]>([]);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [contributing, setContributing] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Load all vaults
@@ -111,6 +113,7 @@ export function useVaults() {
   // Contribute to vault
   const contribute = async (vaultId: bigint, amount: string): Promise<boolean> => {
     try {
+      setContributing(true);
       const contractWithSigner = await getContractWithSigner();
       const value = parseETH(amount);
 
@@ -123,12 +126,15 @@ export function useVaults() {
       console.error('Error contributing:', error);
       alert(parseContractError(error));
       return false;
+    } finally {
+      setContributing(false);
     }
   };
 
   // Emergency withdraw
   const emergencyWithdraw = async (vaultId: bigint): Promise<boolean> => {
     try {
+      setWithdrawing(true);
       const contractWithSigner = await getContractWithSigner();
       const tx = await contractWithSigner.emergencyWithdraw(vaultId);
       await tx.wait();
@@ -139,6 +145,8 @@ export function useVaults() {
       console.error('Error withdrawing:', error);
       alert(parseContractError(error));
       return false;
+    } finally {
+      setWithdrawing(false);
     }
   };
 
@@ -226,6 +234,8 @@ export function useVaults() {
     vaults,
     loading,
     creating,
+    contributing,
+    withdrawing,
     error,
     createVault,
     contribute,

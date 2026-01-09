@@ -1,8 +1,10 @@
 import { useWeb3 } from '../context/Web3Context';
-import { truncateAddress } from '../utils/helpers';
+import { useTheme } from '../context/ThemeContext';
+import { UserDisplay } from './UserDisplay';
 
 export function Header() {
   const { wallet, connectWallet, disconnectWallet, switchToBase, isCorrectNetwork } = useWeb3();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <header className="glass border-b border-dark-border sticky top-0 z-50">
@@ -21,6 +23,15 @@ export function Header() {
 
           {/* Wallet Connection */}
           <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="btn btn-sm btn-secondary"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+
             {!isCorrectNetwork && wallet.isConnected && (
               <button
                 onClick={switchToBase}
@@ -33,9 +44,7 @@ export function Header() {
             {wallet.isConnected ? (
               <div className="flex items-center gap-2">
                 <div className="card py-2 px-3">
-                  <p className="text-sm font-medium">
-                    {truncateAddress(wallet.account || '')}
-                  </p>
+                  <UserDisplay address={wallet.account || ''} size="md" />
                 </div>
                 <button
                   onClick={disconnectWallet}

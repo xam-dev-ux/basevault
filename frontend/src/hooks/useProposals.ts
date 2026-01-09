@@ -10,6 +10,8 @@ export function useProposals(vaultId?: bigint) {
   const [proposals, setProposals] = useState<ProposalWithProgress[]>([]);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [voting, setVoting] = useState(false);
+  const [executing, setExecuting] = useState(false);
 
   // Load proposals for a vault
   const loadProposals = useCallback(async () => {
@@ -92,6 +94,7 @@ export function useProposals(vaultId?: bigint) {
   // Vote on proposal
   const vote = async (proposalId: bigint, support: boolean): Promise<boolean> => {
     try {
+      setVoting(true);
       const contractWithSigner = await getContractWithSigner();
       const tx = await contractWithSigner.vote(proposalId, support);
       await tx.wait();
@@ -102,12 +105,15 @@ export function useProposals(vaultId?: bigint) {
       console.error('Error voting:', error);
       alert(parseContractError(error));
       return false;
+    } finally {
+      setVoting(false);
     }
   };
 
   // Execute proposal
   const executeProposal = async (proposalId: bigint): Promise<boolean> => {
     try {
+      setExecuting(true);
       const contractWithSigner = await getContractWithSigner();
       const tx = await contractWithSigner.executeProposal(proposalId);
       await tx.wait();
@@ -118,6 +124,8 @@ export function useProposals(vaultId?: bigint) {
       console.error('Error executing proposal:', error);
       alert(parseContractError(error));
       return false;
+    } finally {
+      setExecuting(false);
     }
   };
 
@@ -161,6 +169,8 @@ export function useProposals(vaultId?: bigint) {
     proposals,
     loading,
     creating,
+    voting,
+    executing,
     createProposal,
     vote,
     executeProposal,

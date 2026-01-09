@@ -22,6 +22,15 @@ export default {
           border: '#2A2B2F',
           text: '#E5E7EB',
           'text-secondary': '#9CA3AF',
+        },
+        // Light mode colors
+        light: {
+          bg: '#FFFFFF',
+          surface: '#F9FAFB',
+          'surface-hover': '#F3F4F6',
+          border: '#E5E7EB',
+          text: '#111827',
+          'text-secondary': '#6B7280',
         }
       },
       animation: {

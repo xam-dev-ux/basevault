@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import sdk from '@farcaster/miniapp-sdk';
 import { Header } from './components/Header';
 import { VaultCard } from './components/VaultCard';
+import { UserDisplay } from './components/UserDisplay';
 import { useWeb3 } from './context/Web3Context';
 import { useVaults } from './hooks/useVaults';
 import { useProposals } from './hooks/useProposals';
@@ -32,6 +33,8 @@ function App() {
     vaults,
     loading: vaultsLoading,
     creating: vaultCreating,
+    contributing: vaultContributing,
+    withdrawing: vaultWithdrawing,
     error: vaultsError,
     createVault,
     contribute,
@@ -49,22 +52,31 @@ function App() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showContributeModal, setShowContributeModal] = useState(false);
   const [showProposalModal, setShowProposalModal] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [activeTab, setActiveTab] = useState<'info' | 'proposals'>('info');
 
   // Vault detail state
   const [userContribution, setUserContribution] = useState(0n);
   const [contributors, setContributors] = useState<string[]>([]);
 
-  const { proposals, creating: proposalCreating, createProposal, vote, executeProposal } =
+  const { proposals, creating: proposalCreating, voting: proposalVoting, executing: proposalExecuting, createProposal, vote, executeProposal } =
     useProposals(selectedVault?.id);
 
-  // Farcaster Mini App Integration
+  // Check if user has seen onboarding
   useEffect(() => {
-    // Only call ready() if we're in a Farcaster Mini App context
-    // This prevents issues in regular mobile browsers (like MetaMask browser)
-    const isFarcasterContext = () => {
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  // Mini App Integration
+  useEffect(() => {
+    // Only call ready() if we're in a Mini App context
+    // This prevents issues in regular mobile browsers
+    const isMiniAppContext = () => {
       try {
-        // Check if we're in a Mini App context by checking for Farcaster-specific features
+        // Check if we're in a Mini App context by checking for embedded features
         return (
           typeof window !== 'undefined' &&
           window.location.ancestorOrigins?.length > 0 &&
@@ -76,15 +88,15 @@ function App() {
       }
     };
 
-    if (isFarcasterContext()) {
+    if (isMiniAppContext()) {
       try {
         sdk.actions.ready();
-        console.log('Farcaster Mini App SDK initialized');
+        console.log('Mini App SDK initialized');
       } catch (error) {
-        console.warn('Failed to initialize Farcaster SDK:', error);
+        console.warn('Failed to initialize Mini App SDK:', error);
       }
     } else {
-      console.log('Running in regular browser mode (not Mini App)');
+      console.log('Running in standalone browser mode');
     }
   }, []);
 
@@ -216,8 +228,14 @@ function App() {
     }
   }
 
+  // Handle onboarding close
+  function handleOnboardingClose() {
+    localStorage.setItem('hasSeenOnboarding', 'true');
+    setShowOnboarding(false);
+  }
+
   return (
-    <div className="min-h-screen bg-dark-bg">
+    <div className="min-h-screen bg-dark-bg pb-20">
       <Header />
 
       <main className="container-custom py-8">
@@ -407,6 +425,7 @@ function App() {
                     <button
                       onClick={() => setShowProposalModal(true)}
                       className="btn btn-secondary"
+                      disabled={vaultWithdrawing}
                     >
                       Create Proposal
                     </button>
@@ -415,8 +434,16 @@ function App() {
                     <button
                       onClick={handleEmergencyWithdraw}
                       className="btn btn-danger"
+                      disabled={vaultWithdrawing}
                     >
-                      Emergency Withdraw
+                      {vaultWithdrawing ? (
+                        <span className="flex items-center gap-2">
+                          <div className="spinner"></div>
+                          Withdrawing...
+                        </span>
+                      ) : (
+                        'Emergency Withdraw'
+                      )}
                     </button>
                   )}
                 </div>
@@ -460,7 +487,7 @@ function App() {
                           key={addr}
                           className="flex items-center justify-between p-3 bg-dark-bg rounded-lg"
                         >
-                          <span className="font-mono text-sm">{truncateAddress(addr)}</span>
+                          <UserDisplay address={addr} size="sm" />
                           {addr.toLowerCase() === selectedVault.creator.toLowerCase() && (
                             <span className="badge badge-info">Creator</span>
                           )}
@@ -482,6 +509,8 @@ function App() {
                         proposal={proposal}
                         onVote={(support) => vote(proposal.id, support)}
                         onExecute={() => executeProposal(proposal.id)}
+                        voting={proposalVoting}
+                        executing={proposalExecuting}
                       />
                     ))
                   )}
@@ -573,6 +602,7 @@ function App() {
                 step="0.0000001"
                 min="0.0000001"
                 required
+                disabled={vaultContributing}
               />
               <p className="text-xs text-dark-text-secondary mt-1">
                 Minimum: 0.0000001 ETH
@@ -583,15 +613,65 @@ function App() {
                 type="button"
                 onClick={() => setShowContributeModal(false)}
                 className="btn btn-secondary flex-1"
+                disabled={vaultContributing}
               >
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary flex-1">
-                Contribute
+              <button type="submit" className="btn btn-primary flex-1" disabled={vaultContributing}>
+                {vaultContributing ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="spinner"></div>
+                    Contributing...
+                  </span>
+                ) : (
+                  'Contribute'
+                )}
               </button>
             </div>
           </form>
         </Modal>
+      )}
+
+      {/* Bottom Navigation */}
+      {wallet.isConnected && isCorrectNetwork && (
+        <nav className="fixed bottom-0 left-0 right-0 bg-light-surface dark:bg-dark-surface border-t border-light-border dark:border-dark-border z-40">
+          <div className="container-custom">
+            <div className="flex justify-around items-center py-2">
+              <button
+                onClick={() => {
+                  setView('list');
+                  setSelectedVault(null);
+                }}
+                className={`flex flex-col items-center gap-1 px-6 py-3 rounded-lg transition-colors min-h-[44px] min-w-[44px] ${
+                  view === 'list' ? 'text-base-blue' : 'text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text'
+                }`}
+              >
+                <span className="text-xl">🏦</span>
+                <span className="text-xs font-medium">Vaults</span>
+              </button>
+              <button
+                onClick={() => {
+                  setFilter('my');
+                  setView('list');
+                  setSelectedVault(null);
+                }}
+                className={`flex flex-col items-center gap-1 px-6 py-3 rounded-lg transition-colors min-h-[44px] min-w-[44px] ${
+                  filter === 'my' && view === 'list' ? 'text-base-blue' : 'text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text'
+                }`}
+              >
+                <span className="text-xl">👤</span>
+                <span className="text-xs font-medium">My Vaults</span>
+              </button>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="flex flex-col items-center gap-1 px-6 py-3 rounded-lg bg-base-blue text-white hover:bg-base-blue-dark transition-colors min-h-[44px] min-w-[44px]"
+              >
+                <span className="text-xl">➕</span>
+                <span className="text-xs font-medium">Create</span>
+              </button>
+            </div>
+          </div>
+        </nav>
       )}
 
       {/* Create Proposal Modal */}
@@ -649,6 +729,41 @@ function App() {
           </form>
         </Modal>
       )}
+
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <Modal onClose={handleOnboardingClose} title="Welcome to BaseVault">
+          <div className="space-y-4">
+            <p className="text-dark-text-secondary">
+              BaseVault is a collaborative savings platform where you can create shared vaults with friends, family, or community members.
+            </p>
+
+            <div className="space-y-3">
+              <h4 className="font-semibold">How to get started:</h4>
+              <ol className="list-decimal list-inside space-y-2 text-sm text-dark-text-secondary">
+                <li>Connect your wallet to the Base network</li>
+                <li>Create a new savings vault or join an existing one</li>
+                <li>Contribute ETH to reach the savings goal</li>
+                <li>Vote on proposals for how to use the funds</li>
+                <li>Achieve your collaborative savings goals together</li>
+              </ol>
+            </div>
+
+            <div className="bg-dark-surface border border-dark-border rounded-lg p-3">
+              <p className="text-sm text-dark-text-secondary">
+                <strong className="text-dark-text">Important:</strong> All transactions happen automatically on the Base network. Your wallet will be connected securely within this app.
+              </p>
+            </div>
+
+            <button
+              onClick={handleOnboardingClose}
+              className="btn btn-primary w-full"
+            >
+              Get Started
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
@@ -686,19 +801,25 @@ function ProposalCard({
   proposal,
   onVote,
   onExecute,
+  voting,
+  executing,
 }: {
   proposal: ProposalWithProgress;
   onVote: (support: boolean) => void;
   onExecute: () => void;
+  voting: boolean;
+  executing: boolean;
 }) {
   return (
     <div className="card">
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h4 className="font-semibold mb-1">{proposal.reason}</h4>
-          <p className="text-sm text-dark-text-secondary">
-            By {truncateAddress(proposal.proposer)} • {formatDate(proposal.createdAt)}
-          </p>
+          <div className="flex items-center gap-2 text-sm text-dark-text-secondary">
+            <span>By</span>
+            <UserDisplay address={proposal.proposer} size="sm" />
+            <span>• {formatDate(proposal.createdAt)}</span>
+          </div>
         </div>
         <span className={`badge ${getStatusColor(proposal.status)}`}>
           {getProposalStatusLabel(proposal.status)}
@@ -706,9 +827,9 @@ function ProposalCard({
       </div>
 
       <div className="bg-dark-bg rounded-lg p-3 mb-4">
-        <div className="flex justify-between mb-1">
+        <div className="flex justify-between items-center mb-1">
           <span className="text-sm">Recipient:</span>
-          <span className="text-sm font-mono">{truncateAddress(proposal.recipient)}</span>
+          <UserDisplay address={proposal.recipient} size="sm" />
         </div>
         <div className="flex justify-between">
           <span className="text-sm">Amount:</span>
@@ -745,14 +866,30 @@ function ProposalCard({
           <button
             onClick={() => onVote(true)}
             className="btn btn-sm bg-green-600 hover:bg-green-700 text-white flex-1"
+            disabled={voting}
           >
-            Vote For
+            {voting ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="spinner"></div>
+                Voting...
+              </span>
+            ) : (
+              'Vote For'
+            )}
           </button>
           <button
             onClick={() => onVote(false)}
             className="btn btn-sm bg-red-600 hover:bg-red-700 text-white flex-1"
+            disabled={voting}
           >
-            Vote Against
+            {voting ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="spinner"></div>
+                Voting...
+              </span>
+            ) : (
+              'Vote Against'
+            )}
           </button>
         </div>
       )}
@@ -760,8 +897,15 @@ function ProposalCard({
         <p className="text-sm text-dark-text-secondary text-center">You have voted</p>
       )}
       {proposal.status === 1 && (
-        <button onClick={onExecute} className="btn btn-primary w-full">
-          Execute Proposal
+        <button onClick={onExecute} className="btn btn-primary w-full" disabled={executing}>
+          {executing ? (
+            <span className="flex items-center justify-center gap-2">
+              <div className="spinner"></div>
+              Executing...
+            </span>
+          ) : (
+            'Execute Proposal'
+          )}
         </button>
       )}
     </div>
