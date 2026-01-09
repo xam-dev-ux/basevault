@@ -16,7 +16,6 @@ import {
   formatETH,
   formatDate,
   formatDuration,
-  truncateAddress,
   getStatusColor,
   getVaultStatusLabel,
   getProposalStatusLabel,
