@@ -11,20 +11,19 @@
     "iconUrl": "https://basevault-woad.vercel.app/icon-1024.png",
     "splashImageUrl": "https://basevault-woad.vercel.app/splash.png",
     "splashBackgroundColor": "#0A0B0D",
-    "webhookUrl": "",
-    "subtitle": "Create shared savings vaults with democratic fund management",
-    "description": "BaseVault enables groups to pool funds in collaborative savings vaults on Base. Create goals, contribute together, and vote democratically on proposals for fund releases. Perfect for group savings, shared expenses, and community treasuries with transparent on-chain governance.",
+    "subtitle": "Collaborative savings on Base",
+    "description": "Create shared savings vaults with your community. Pool funds together, contribute ETH, and vote democratically on proposals. Perfect for group goals and expenses.",
     "screenshotUrls": [
       "https://basevault-woad.vercel.app/screenshots/screenshot-1.png",
       "https://basevault-woad.vercel.app/screenshots/screenshot-2.png",
       "https://basevault-woad.vercel.app/screenshots/screenshot-3.png"
     ],
     "primaryCategory": "finance",
-    "tags": ["savings", "collaborative", "dao", "voting", "defi", "web3", "ethereum", "base"],
+    "tags": ["savings", "dao", "voting", "defi", "base"],
     "heroImageUrl": "https://basevault-woad.vercel.app/cover-1200x630.png",
     "tagline": "Save together, decide together",
-    "ogTitle": "BaseVault - Collaborative Savings on Base",
-    "ogDescription": "Create group savings vaults and vote democratically to release funds. Built on Base L2 for low fees and fast transactions.",
+    "ogTitle": "BaseVault - Group Savings",
+    "ogDescription": "Create shared savings vaults and vote on proposals. Collaborative savings made easy on Base.",
     "ogImageUrl": "https://basevault-woad.vercel.app/cover-1200x630.png",
     "noindex": false
   }
