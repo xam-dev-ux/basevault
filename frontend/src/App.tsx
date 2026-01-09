@@ -738,108 +738,123 @@ function App() {
 
       {/* Onboarding Modal */}
       {showOnboarding && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-          <div className="bg-light-surface dark:bg-dark-surface border-2 border-base-blue rounded-2xl max-w-2xl w-full p-8 animate-slide-up shadow-2xl">
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md overflow-y-auto"
+          onClick={handleOnboardingClose}
+        >
+          <div
+            className="bg-light-surface dark:bg-dark-surface border-2 border-base-blue rounded-2xl max-w-2xl w-full p-6 md:p-8 animate-slide-up shadow-2xl my-8 max-h-[90vh] overflow-y-auto relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={handleOnboardingClose}
+              className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-light-bg dark:bg-dark-bg hover:bg-light-surface-hover dark:hover:bg-dark-surface-hover transition-colors border border-light-border dark:border-dark-border"
+              aria-label="Close"
+            >
+              <span className="text-2xl text-light-text-secondary dark:text-dark-text-secondary">×</span>
+            </button>
+
             {/* Header with Icon */}
-            <div className="text-center mb-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-base-blue to-base-blue-light rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
-                <span className="text-4xl">🏦</span>
+            <div className="text-center mb-4 pr-10">
+              <div className="w-16 h-16 bg-gradient-to-br from-base-blue to-base-blue-light rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-lg">
+                <span className="text-3xl">🏦</span>
               </div>
-              <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-base-blue to-base-blue-light bg-clip-text text-transparent">
+              <h2 className="text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-base-blue to-base-blue-light bg-clip-text text-transparent">
                 Welcome to BaseVault
               </h2>
-              <p className="text-light-text-secondary dark:text-dark-text-secondary text-lg">
+              <p className="text-light-text-secondary dark:text-dark-text-secondary text-sm md:text-base">
                 Collaborative savings made simple and secure
               </p>
             </div>
 
             {/* Main Content */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* What is BaseVault */}
-              <div className="bg-light-bg dark:bg-dark-bg rounded-xl p-5 border border-light-border dark:border-dark-border">
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <span className="text-2xl">💡</span>
+              <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-4 border border-light-border dark:border-dark-border">
+                <h3 className="font-semibold text-base mb-2 flex items-center gap-2">
+                  <span className="text-xl">💡</span>
                   What is BaseVault?
                 </h3>
-                <p className="text-light-text-secondary dark:text-dark-text-secondary">
+                <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
                   Create shared savings vaults with friends, family, or community. Pool funds together towards common goals and make decisions democratically through voting.
                 </p>
               </div>
 
               {/* How it Works */}
-              <div className="bg-light-bg dark:bg-dark-bg rounded-xl p-5 border border-light-border dark:border-dark-border">
-                <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                  <span className="text-2xl">🎯</span>
+              <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-4 border border-light-border dark:border-dark-border">
+                <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
+                  <span className="text-xl">🎯</span>
                   How to Get Started
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-sm">
+                <div className="space-y-2.5">
+                  <div className="flex gap-2.5">
+                    <div className="flex-shrink-0 w-7 h-7 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-xs">
                       1
                     </div>
                     <div>
-                      <p className="font-medium">Connect Your Wallet</p>
-                      <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Connect to Base network automatically</p>
+                      <p className="font-medium text-sm">Connect Your Wallet</p>
+                      <p className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Connect to Base network</p>
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-sm">
+                  <div className="flex gap-2.5">
+                    <div className="flex-shrink-0 w-7 h-7 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-xs">
                       2
                     </div>
                     <div>
-                      <p className="font-medium">Create or Join a Vault</p>
-                      <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Set goals and invite contributors</p>
+                      <p className="font-medium text-sm">Create or Join a Vault</p>
+                      <p className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Set goals and invite contributors</p>
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-sm">
+                  <div className="flex gap-2.5">
+                    <div className="flex-shrink-0 w-7 h-7 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-xs">
                       3
                     </div>
                     <div>
-                      <p className="font-medium">Contribute & Vote</p>
-                      <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Add funds and vote on proposals democratically</p>
+                      <p className="font-medium text-sm">Contribute & Vote</p>
+                      <p className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Add funds and vote democratically</p>
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-sm">
+                  <div className="flex gap-2.5">
+                    <div className="flex-shrink-0 w-7 h-7 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-xs">
                       4
                     </div>
                     <div>
-                      <p className="font-medium">Reach Your Goals</p>
-                      <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Execute approved proposals when ready</p>
+                      <p className="font-medium text-sm">Reach Your Goals</p>
+                      <p className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Execute approved proposals</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Key Features */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-3 border border-light-border dark:border-dark-border">
-                  <div className="text-xl mb-1">🔒</div>
-                  <div className="text-sm font-medium">Secure</div>
-                  <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">On-chain security</div>
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-2.5 border border-light-border dark:border-dark-border">
+                  <div className="text-lg mb-0.5">🔒</div>
+                  <div className="text-xs font-medium">Secure</div>
+                  <div className="text-[10px] text-light-text-secondary dark:text-dark-text-secondary">On-chain security</div>
                 </div>
-                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-3 border border-light-border dark:border-dark-border">
-                  <div className="text-xl mb-1">⚡</div>
-                  <div className="text-sm font-medium">Fast</div>
-                  <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Base L2 speed</div>
+                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-2.5 border border-light-border dark:border-dark-border">
+                  <div className="text-lg mb-0.5">⚡</div>
+                  <div className="text-xs font-medium">Fast</div>
+                  <div className="text-[10px] text-light-text-secondary dark:text-dark-text-secondary">Base L2 speed</div>
                 </div>
-                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-3 border border-light-border dark:border-dark-border">
-                  <div className="text-xl mb-1">🗳️</div>
-                  <div className="text-sm font-medium">Democratic</div>
-                  <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Vote on proposals</div>
+                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-2.5 border border-light-border dark:border-dark-border">
+                  <div className="text-lg mb-0.5">🗳️</div>
+                  <div className="text-xs font-medium">Democratic</div>
+                  <div className="text-[10px] text-light-text-secondary dark:text-dark-text-secondary">Vote on proposals</div>
                 </div>
-                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-3 border border-light-border dark:border-dark-border">
-                  <div className="text-xl mb-1">💸</div>
-                  <div className="text-sm font-medium">Low Fees</div>
-                  <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Cheap transactions</div>
+                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-2.5 border border-light-border dark:border-dark-border">
+                  <div className="text-lg mb-0.5">💸</div>
+                  <div className="text-xs font-medium">Low Fees</div>
+                  <div className="text-[10px] text-light-text-secondary dark:text-dark-text-secondary">Cheap transactions</div>
                 </div>
               </div>
 
               {/* CTA Button */}
               <button
                 onClick={handleOnboardingClose}
-                className="btn btn-primary w-full text-lg py-4 shadow-lg hover:shadow-xl transition-shadow"
+                className="btn btn-primary w-full shadow-lg hover:shadow-xl transition-shadow"
               >
                 🚀 Start Saving Together
               </button>
