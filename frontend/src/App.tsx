@@ -65,7 +65,9 @@ function App() {
   // Check if user has seen onboarding
   useEffect(() => {
     const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+    console.log('Checking onboarding status:', hasSeenOnboarding);
     if (!hasSeenOnboarding) {
+      console.log('First time user - showing onboarding');
       setShowOnboarding(true);
     }
   }, []);
@@ -234,9 +236,14 @@ function App() {
     setShowOnboarding(false);
   }
 
+  // Handle show help
+  function handleShowHelp() {
+    setShowOnboarding(true);
+  }
+
   return (
     <div className="min-h-screen bg-dark-bg pb-20">
-      <Header />
+      <Header onShowHelp={handleShowHelp} />
 
       <main className="container-custom py-8">
         {!wallet.isConnected ? (
@@ -732,37 +739,114 @@ function App() {
 
       {/* Onboarding Modal */}
       {showOnboarding && (
-        <Modal onClose={handleOnboardingClose} title="Welcome to BaseVault">
-          <div className="space-y-4">
-            <p className="text-dark-text-secondary">
-              BaseVault is a collaborative savings platform where you can create shared vaults with friends, family, or community members.
-            </p>
-
-            <div className="space-y-3">
-              <h4 className="font-semibold">How to get started:</h4>
-              <ol className="list-decimal list-inside space-y-2 text-sm text-dark-text-secondary">
-                <li>Connect your wallet to the Base network</li>
-                <li>Create a new savings vault or join an existing one</li>
-                <li>Contribute ETH to reach the savings goal</li>
-                <li>Vote on proposals for how to use the funds</li>
-                <li>Achieve your collaborative savings goals together</li>
-              </ol>
-            </div>
-
-            <div className="bg-dark-surface border border-dark-border rounded-lg p-3">
-              <p className="text-sm text-dark-text-secondary">
-                <strong className="text-dark-text">Important:</strong> All transactions happen automatically on the Base network. Your wallet will be connected securely within this app.
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+          <div className="bg-light-surface dark:bg-dark-surface border-2 border-base-blue rounded-2xl max-w-2xl w-full p-8 animate-slide-up shadow-2xl">
+            {/* Header with Icon */}
+            <div className="text-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-base-blue to-base-blue-light rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg">
+                <span className="text-4xl">🏦</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-base-blue to-base-blue-light bg-clip-text text-transparent">
+                Welcome to BaseVault
+              </h2>
+              <p className="text-light-text-secondary dark:text-dark-text-secondary text-lg">
+                Collaborative savings made simple and secure
               </p>
             </div>
 
-            <button
-              onClick={handleOnboardingClose}
-              className="btn btn-primary w-full"
-            >
-              Get Started
-            </button>
+            {/* Main Content */}
+            <div className="space-y-6">
+              {/* What is BaseVault */}
+              <div className="bg-light-bg dark:bg-dark-bg rounded-xl p-5 border border-light-border dark:border-dark-border">
+                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                  <span className="text-2xl">💡</span>
+                  What is BaseVault?
+                </h3>
+                <p className="text-light-text-secondary dark:text-dark-text-secondary">
+                  Create shared savings vaults with friends, family, or community. Pool funds together towards common goals and make decisions democratically through voting.
+                </p>
+              </div>
+
+              {/* How it Works */}
+              <div className="bg-light-bg dark:bg-dark-bg rounded-xl p-5 border border-light-border dark:border-dark-border">
+                <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                  <span className="text-2xl">🎯</span>
+                  How to Get Started
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-sm">
+                      1
+                    </div>
+                    <div>
+                      <p className="font-medium">Connect Your Wallet</p>
+                      <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Connect to Base network automatically</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-sm">
+                      2
+                    </div>
+                    <div>
+                      <p className="font-medium">Create or Join a Vault</p>
+                      <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Set goals and invite contributors</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-sm">
+                      3
+                    </div>
+                    <div>
+                      <p className="font-medium">Contribute & Vote</p>
+                      <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Add funds and vote on proposals democratically</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-base-blue text-white rounded-full flex items-center justify-center font-bold text-sm">
+                      4
+                    </div>
+                    <div>
+                      <p className="font-medium">Reach Your Goals</p>
+                      <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Execute approved proposals when ready</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Features */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-3 border border-light-border dark:border-dark-border">
+                  <div className="text-xl mb-1">🔒</div>
+                  <div className="text-sm font-medium">Secure</div>
+                  <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">On-chain security</div>
+                </div>
+                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-3 border border-light-border dark:border-dark-border">
+                  <div className="text-xl mb-1">⚡</div>
+                  <div className="text-sm font-medium">Fast</div>
+                  <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Base L2 speed</div>
+                </div>
+                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-3 border border-light-border dark:border-dark-border">
+                  <div className="text-xl mb-1">🗳️</div>
+                  <div className="text-sm font-medium">Democratic</div>
+                  <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Vote on proposals</div>
+                </div>
+                <div className="bg-light-bg dark:bg-dark-bg rounded-lg p-3 border border-light-border dark:border-dark-border">
+                  <div className="text-xl mb-1">💸</div>
+                  <div className="text-sm font-medium">Low Fees</div>
+                  <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">Cheap transactions</div>
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <button
+                onClick={handleOnboardingClose}
+                className="btn btn-primary w-full text-lg py-4 shadow-lg hover:shadow-xl transition-shadow"
+              >
+                🚀 Start Saving Together
+              </button>
+            </div>
           </div>
-        </Modal>
+        </div>
       )}
     </div>
   );

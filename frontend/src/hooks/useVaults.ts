@@ -195,7 +195,7 @@ export function useVaults() {
     if (!wallet.account) return [];
     return vaults.filter(
       (v) =>
-        v.creator.toLowerCase() === wallet.account!.toLowerCase()
+        v.creator && v.creator.toLowerCase() === wallet.account!.toLowerCase()
     );
   }, [vaults, wallet.account]);
 

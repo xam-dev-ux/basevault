@@ -2,7 +2,11 @@ import { useWeb3 } from '../context/Web3Context';
 import { useTheme } from '../context/ThemeContext';
 import { UserDisplay } from './UserDisplay';
 
-export function Header() {
+interface HeaderProps {
+  onShowHelp?: () => void;
+}
+
+export function Header({ onShowHelp }: HeaderProps = {}) {
   const { wallet, connectWallet, disconnectWallet, switchToBase, isCorrectNetwork } = useWeb3();
   const { theme, toggleTheme } = useTheme();
 
@@ -23,6 +27,18 @@ export function Header() {
 
           {/* Wallet Connection */}
           <div className="flex items-center gap-3">
+            {/* Help Button */}
+            {onShowHelp && (
+              <button
+                onClick={onShowHelp}
+                className="btn btn-sm btn-secondary"
+                aria-label="Show help"
+                title="Show tutorial"
+              >
+                ❓
+              </button>
+            )}
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
