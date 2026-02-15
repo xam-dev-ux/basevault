@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Contract, BrowserProvider } from 'ethers';
 import { useWeb3 } from '../context/Web3Context';
 import { BASE_VAULT_ABI } from '../utils/abi';
+import { wrapSignerWithAttribution } from '../utils/builderCode';
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || '';
 
@@ -30,7 +31,9 @@ export function useContract() {
     }
 
     const signer = await wallet.provider.getSigner();
-    return new Contract(CONTRACT_ADDRESS, BASE_VAULT_ABI, signer);
+    // Wrap the signer with attribution to append builder code to all transactions
+    const attributedSigner = wrapSignerWithAttribution(signer);
+    return new Contract(CONTRACT_ADDRESS, BASE_VAULT_ABI, attributedSigner);
   };
 
   return {
